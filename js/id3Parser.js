@@ -2,7 +2,7 @@
  * Musico - ID3 & Audio Metadata Parser
  * Extracts Title, Artist, Album, Year, and Embedded Album Art directly from local audio files.
  */
-
+//changes by neeraj
 const ID3Parser = {
   /**
    * Parse metadata from an audio File or Blob
@@ -259,9 +259,9 @@ const ID3Parser = {
 
           const imgBytes = new Uint8Array(buffer, dataOffset, dataLen);
           const blob = new Blob([imgBytes], { type: mime || 'image/jpeg' });
-          return { 
+          return {
             coverBlob: blob,
-            coverUrl: URL.createObjectURL(blob) 
+            coverUrl: URL.createObjectURL(blob)
           };
         }
         offset += blockSize;
@@ -291,9 +291,9 @@ const ID3Parser = {
               if (imgStart + imgLen <= bytes.length) {
                 const imgBytes = bytes.slice(imgStart, imgStart + imgLen);
                 const blob = new Blob([imgBytes], { type: 'image/jpeg' });
-                return { 
+                return {
                   coverBlob: blob,
-                  coverUrl: URL.createObjectURL(blob) 
+                  coverUrl: URL.createObjectURL(blob)
                 };
               }
             }
@@ -377,7 +377,7 @@ const ID3Parser = {
    */
   getFallbackMetadata(filename) {
     const cleanName = filename.replace(/\.[^/.]+$/, '').trim();
-    
+
     if (cleanName.includes(' - ')) {
       const parts = cleanName.split(' - ');
       const artist = parts[0].trim();
