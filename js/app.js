@@ -64,8 +64,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Apply search filter if query is present
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(t => 
-        t.title.toLowerCase().includes(q) || 
+      filtered = filtered.filter(t =>
+        t.title.toLowerCase().includes(q) ||
         (t.artist && t.artist.toLowerCase().includes(q)) ||
         (t.album && t.album.toLowerCase().includes(q))
       );
@@ -94,12 +94,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     songsListContainer.innerHTML = filtered.map((track, idx) => {
       const isCurrent = player.currentTrack && player.currentTrack.id === track.id;
       const isPlaying = isCurrent && player.isPlaying;
-      const isFallback = !track.coverUrl || 
-                         track.coverUrl.includes('M logo for music items') ||
-                         track.coverUrl.includes('MlogoforMusicItems') ||
-                         track.coverUrl.includes('Mlogo.png') || 
-                         track.coverUrl.includes('Group 4') || 
-                         track.coverUrl.trim() === '';
+      const isFallback = !track.coverUrl ||
+        track.coverUrl.includes('M logo for music items') ||
+        track.coverUrl.includes('MlogoforMusicItems') ||
+        track.coverUrl.includes('Mlogo.png') ||
+        track.coverUrl.includes('Group 4') ||
+        track.coverUrl.trim() === '';
       const coverSrc = isFallback ? 'assets/M logo for music items.png' : track.coverUrl;
 
       return `
@@ -149,6 +149,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         showContextMenu(e, trackId);
       });
     });
+
+    // Update custom mobile scrollbar position
+    requestAnimationFrame(updateMobileScrollbarThumb);
   }
 
   // Show Toast notification
@@ -170,8 +173,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         allTracks = [...newTracks, ...allTracks];
         renderSongList();
         showToast(`Imported ${newTracks.length} song${newTracks.length > 1 ? 's' : ''}!`);
-        // Start playing the first track
-        player.setQueue(allTracks, 0, true);
+        // Prepare first track without autoplay (plays only upon user action - FIX 3)
+        player.setQueue(allTracks, 0, false);
       }
     } catch (err) {
       console.warn('Folder selection canceled or error:', err);
@@ -251,6 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   function toggleShuffleFilter() {
     const isShuffled = player.toggleShuffle();
     showToast(isShuffled ? 'Shuffle: ON' : 'Shuffle: OFF');
+    if (window.updateMobileUpNextUI) window.updateMobileUpNextUI();
   }
 
   ['filterAllBtn', 'mobileFilterAllBtn', 'mobileFullFilterAllBtn'].forEach(id => {
@@ -291,7 +295,215 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       mobileFullPlayer.classList.add('open');
+      requestAnimationFrame(() => {
+        if (window.updateMobileUpNextUI) window.updateMobileUpNextUI();
+      });
     });
+  }
+
+  // =========================================================================
+  // RESPONSIVE UP NEXT SECTION & FULL-SCREEN PANEL (Images 2 & 3)
+  // =========================================================================
+  const mobileUpNextSection = document.getElementById('mobileUpNextSection');
+  const mobileUpNextList = document.getElementById('mobileUpNextList');
+  const mobileUpNextPanel = document.getElementById('mobileUpNextPanel');
+  const mobileUpNextPanelHandle = document.getElementById('mobileUpNextPanelHandle');
+  const mobileUpNextFullList = document.getElementById('mobileUpNextFullList');
+  const mobileFullMainContent = document.getElementById('mobileFullMainContent');
+  const mobileFullBody = document.getElementById('mobileFullBody');
+
+  function getUpcomingTracks() {
+    if (!player.queue || player.queue.length === 0 || !player.currentTrack) return [];
+
+    // 1. REPEAT ONE SONG MODE: Show ONLY the currently playing song
+    if (player.repeatMode === 'one') {
+      return [player.currentTrack];
+    }
+
+    const currentIdx = player.currentIndex;
+    if (currentIdx === -1) return player.queue;
+
+    // 2. NORMAL MODE / SHUFFLE MODE: Songs following current song in active queue
+    let upcoming = player.queue.slice(currentIdx + 1);
+
+    // 3. REPEAT ALL MODE: Loop from beginning if at end of queue
+    if (player.repeatMode === 'all' && upcoming.length === 0 && player.queue.length > 1) {
+      upcoming = player.queue.slice(0, currentIdx);
+    }
+
+    return upcoming;
+  }
+
+  function renderUpNextCard(track) {
+    const isFallback = !track.coverUrl ||
+      track.coverUrl.includes('M logo for music items') ||
+      track.coverUrl.includes('MlogoforMusicItems') ||
+      track.coverUrl.includes('Mlogo.png') ||
+      track.coverUrl.includes('Group 4') ||
+      track.coverUrl.trim() === '';
+    const coverSrc = isFallback ? 'assets/M logo for music items.png' : track.coverUrl;
+
+    return `
+      <div class="mobile-up-next-card" data-id="${track.id}">
+        <div class="song-card-left">
+          <div class="song-thumb-wrapper">
+            <img src="${coverSrc}" alt="${escapeHtml(track.title)}" class="song-thumb ${isFallback ? 'fallback-logo' : ''}" onerror="this.onerror=null;this.src='assets/M logo for music items.png';this.className='song-thumb fallback-logo';" />
+          </div>
+          <div class="song-info">
+            <span class="song-title">${escapeHtml(track.title)}</span>
+            <span class="song-artist">//${escapeHtml(track.artist || 'Unknown')}</span>
+          </div>
+        </div>
+        <button class="song-options-btn" data-id="${track.id}" aria-label="Song options" title="Options">
+          <img src="assets/OptionsThreeDots.svg" alt="Options" class="options-icon" />
+        </button>
+      </div>
+    `;
+  }
+
+  function attachUpNextCardListeners(container) {
+    if (!container) return;
+    container.querySelectorAll('.mobile-up-next-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('.song-options-btn')) return;
+        const trackId = card.dataset.id;
+        const targetIdx = player.queue.findIndex(t => t.id === trackId);
+        if (targetIdx !== -1) {
+          player.loadAndPlay(targetIdx);
+          if (mobileUpNextPanel) {
+            mobileUpNextPanel.classList.remove('open');
+          }
+        }
+      });
+    });
+
+    container.querySelectorAll('.song-options-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const trackId = btn.dataset.id;
+        showContextMenu(e, trackId);
+      });
+    });
+  }
+
+  function updateMobileUpNextUI() {
+    if (!mobileUpNextSection || !mobileUpNextList || !mobileFullMainContent || !mobileFullBody) return;
+
+    const upcoming = getUpcomingTracks();
+
+    // 1. Populate Full-Screen Up Next Panel
+    if (mobileUpNextFullList) {
+      if (upcoming.length === 0) {
+        mobileUpNextFullList.innerHTML = `<div class="up-next-empty">No upcoming songs in queue</div>`;
+      } else {
+        mobileUpNextFullList.innerHTML = upcoming.map(t => renderUpNextCard(t)).join('');
+        attachUpNextCardListeners(mobileUpNextFullList);
+      }
+    }
+
+    // 2. Calculate dynamic available vertical space for in-place section
+    const bodyHeight = mobileFullBody.clientHeight;
+    const mainHeight = mobileFullMainContent.offsetHeight;
+    const availableHeight = bodyHeight - mainHeight;
+
+    const cardHeightWithGap = 60; // 52px card + 8px gap
+    const headerHeight = 34;      // "Up Next" header height
+
+    if (upcoming.length === 0 || availableHeight < (headerHeight + 52)) {
+      // STATE B: Compact "UP NEXT" bar (IMAGE 3)
+      mobileUpNextSection.classList.add('compact-state');
+      mobileUpNextList.innerHTML = '';
+      return;
+    }
+
+    // STATE A: Enough Space -> Display as many items as comfortably fit (IMAGE 2)
+    mobileUpNextSection.classList.remove('compact-state');
+    const maxItemsFit = Math.max(1, Math.floor((availableHeight - headerHeight - 10) / cardHeightWithGap));
+    const visibleUpcoming = upcoming.slice(0, maxItemsFit);
+
+    mobileUpNextList.innerHTML = visibleUpcoming.map(t => renderUpNextCard(t)).join('');
+    attachUpNextCardListeners(mobileUpNextList);
+  }
+
+  window.updateMobileUpNextUI = updateMobileUpNextUI;
+
+  // Swipe Up gesture on Up Next section to open full-screen panel
+  if (mobileUpNextSection && mobileUpNextPanel) {
+    let upNextStartY = 0;
+    let upNextCurrentY = 0;
+    let isSwipingUpNext = false;
+
+    mobileUpNextSection.addEventListener('touchstart', (e) => {
+      upNextStartY = e.touches[0].clientY;
+      upNextCurrentY = upNextStartY;
+      isSwipingUpNext = true;
+    }, { passive: true });
+
+    mobileUpNextSection.addEventListener('touchmove', (e) => {
+      if (!isSwipingUpNext) return;
+      upNextCurrentY = e.touches[0].clientY;
+    }, { passive: true });
+
+    mobileUpNextSection.addEventListener('touchend', () => {
+      if (isSwipingUpNext && (upNextStartY - upNextCurrentY > 35)) {
+        mobileUpNextPanel.classList.add('open');
+      }
+      isSwipingUpNext = false;
+      upNextStartY = 0;
+      upNextCurrentY = 0;
+    });
+
+    // Tap anywhere on the Up Next bar opens the full Up Next panel (Change 4)
+    mobileUpNextSection.addEventListener('click', (e) => {
+      if (e.target.closest('.song-options-btn') || e.target.closest('.mobile-up-next-card')) {
+        return;
+      }
+      mobileUpNextPanel.classList.add('open');
+    });
+  }
+
+  // Swipe Down gesture on Full-Screen Up Next Panel to close it
+  if (mobileUpNextPanel) {
+    let panelStartY = 0;
+    let panelCurrentY = 0;
+    let isSwipingPanel = false;
+
+    mobileUpNextPanel.addEventListener('touchstart', (e) => {
+      if (!mobileUpNextFullList || mobileUpNextFullList.scrollTop <= 5) {
+        panelStartY = e.touches[0].clientY;
+        panelCurrentY = panelStartY;
+        isSwipingPanel = true;
+      } else {
+        isSwipingPanel = false;
+      }
+    }, { passive: true });
+
+    mobileUpNextPanel.addEventListener('touchmove', (e) => {
+      if (!isSwipingPanel) return;
+      panelCurrentY = e.touches[0].clientY;
+      const deltaY = panelCurrentY - panelStartY;
+      if (deltaY > 0) {
+        mobileUpNextPanel.style.transform = `translateY(${Math.min(deltaY, 250)}px)`;
+      }
+    }, { passive: true });
+
+    mobileUpNextPanel.addEventListener('touchend', () => {
+      if (!isSwipingPanel) return;
+      const deltaY = panelCurrentY - panelStartY;
+      mobileUpNextPanel.style.transform = '';
+      if (deltaY > 60) {
+        mobileUpNextPanel.classList.remove('open');
+      }
+      isSwipingPanel = false;
+      panelStartY = 0;
+      panelCurrentY = 0;
+    });
+
+    if (mobileUpNextPanelHandle) {
+      mobileUpNextPanelHandle.addEventListener('click', () => {
+        mobileUpNextPanel.classList.remove('open');
+      });
+    }
   }
 
   // Mobile Swipe Down to Dismiss Full Player (IMAGE 2)
@@ -299,6 +511,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (mobileSwipeHandle && mobileFullPlayer) {
     mobileSwipeHandle.addEventListener('click', () => {
       mobileFullPlayer.classList.remove('open');
+      if (mobileUpNextPanel) mobileUpNextPanel.classList.remove('open');
     });
   }
 
@@ -309,7 +522,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     mobileFullPlayer.addEventListener('touchstart', (e) => {
       // Allow swipe down when at the top of scroll or touching header/art
-      if (mobileFullPlayer.scrollTop <= 5) {
+      if (mobileFullPlayer.scrollTop <= 5 && (!mobileUpNextPanel || !mobileUpNextPanel.classList.contains('open'))) {
         startY = e.touches[0].clientY;
         isSwiping = true;
       } else {
@@ -322,7 +535,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       currentY = e.touches[0].clientY;
       const deltaY = currentY - startY;
       if (deltaY > 0) {
-        // Visual pull down effect
         mobileFullPlayer.style.transform = `translateY(${Math.min(deltaY, 200)}px)`;
       }
     }, { passive: true });
@@ -333,6 +545,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       mobileFullPlayer.style.transform = '';
       if (deltaY > 70) {
         mobileFullPlayer.classList.remove('open');
+        if (mobileUpNextPanel) mobileUpNextPanel.classList.remove('open');
       }
       isSwiping = false;
       startY = 0;
@@ -462,7 +675,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
     const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
     const percent = rect.width > 0 ? (x / rect.width) * 100 : 0;
-    
+
     // Update thumb position on the horizontal bar
     if (topSliderThumb) {
       const maxLeft = Math.max(0, rect.width - 30);
@@ -493,19 +706,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     topSliderThumb.style.left = `${leftPx}px`;
   }
 
-  if (songsListContainer) {
-    songsListContainer.addEventListener('scroll', updateSliderThumbFromSongListScroll, { passive: true });
+  // Mobile Vertical Scrollbar Logic (FIX 2: Real Mobile Custom Scrollbar with Black Track & Gray Thumb)
+  const mobileScrollbarTrack = document.getElementById('mobileScrollbarTrack');
+  const mobileScrollbarThumb = document.getElementById('mobileScrollbarThumb');
+  let isDraggingMobileScrollbar = false;
+
+  function updateMobileScrollbarThumb() {
+    if (!mobileScrollbarTrack || !mobileScrollbarThumb || !songsListContainer) return;
+    const maxScroll = songsListContainer.scrollHeight - songsListContainer.clientHeight;
+    const trackHeight = mobileScrollbarTrack.clientHeight;
+
+    if (maxScroll <= 0 || trackHeight <= 0) {
+      mobileScrollbarThumb.style.height = `${Math.min(32, Math.max(20, trackHeight * 0.22))}px`;
+      mobileScrollbarThumb.style.top = '2px';
+      return;
+    }
+
+    // Shorter thumb height (less than half of previous size, compact as in Figma)
+    const visibleRatio = songsListContainer.clientHeight / songsListContainer.scrollHeight;
+    const thumbHeight = Math.max(20, Math.min(trackHeight * 0.28, Math.max(24, visibleRatio * trackHeight * 0.32)));
+    mobileScrollbarThumb.style.height = `${thumbHeight}px`;
+
+    const maxTop = Math.max(0, trackHeight - thumbHeight - 4);
+    const scrollPercent = Math.min(1, Math.max(0, songsListContainer.scrollTop / maxScroll));
+    const topPx = 2 + scrollPercent * maxTop;
+    mobileScrollbarThumb.style.top = `${topPx}px`;
   }
 
-  if (mobileScrollTrack) {
-    mobileScrollTrack.addEventListener('mousedown', (e) => {
-      isDraggingMobileScroll = true;
-      updateSongListScrollFromMobileTrack(e);
-    });
+  function handleMobileScrollbarMove(clientY) {
+    if (!mobileScrollbarTrack || !songsListContainer) return;
+    const rect = mobileScrollbarTrack.getBoundingClientRect();
+    const trackHeight = rect.height;
+    const thumbHeight = mobileScrollbarThumb ? mobileScrollbarThumb.clientHeight : 28;
+    const maxTop = Math.max(1, trackHeight - thumbHeight - 4);
 
-    mobileScrollTrack.addEventListener('touchstart', (e) => {
-      isDraggingMobileScroll = true;
-      updateSongListScrollFromMobileTrack(e);
+    // Position relative to track top, center thumb under finger
+    const relativeY = clientY - rect.top - thumbHeight / 2;
+    const clampedY = Math.max(0, Math.min(maxTop, relativeY));
+    const scrollPercent = clampedY / maxTop;
+
+    const maxScroll = songsListContainer.scrollHeight - songsListContainer.clientHeight;
+    if (maxScroll > 0) {
+      songsListContainer.scrollTop = scrollPercent * maxScroll;
+    }
+  }
+
+  if (mobileScrollbarTrack) {
+    mobileScrollbarTrack.addEventListener('touchstart', (e) => {
+      isDraggingMobileScrollbar = true;
+      handleMobileScrollbarMove(e.touches[0].clientY);
+    }, { passive: false });
+
+    mobileScrollbarTrack.addEventListener('mousedown', (e) => {
+      isDraggingMobileScrollbar = true;
+      handleMobileScrollbarMove(e.clientY);
+    });
+  }
+
+  if (songsListContainer) {
+    songsListContainer.addEventListener('scroll', () => {
+      updateSliderThumbFromSongListScroll();
+      updateMobileScrollbarThumb();
     }, { passive: true });
   }
 
@@ -523,22 +784,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('mousemove', (e) => {
     if (isDraggingSlider) updateSongListScrollFromSlider(e);
-    if (isDraggingMobileScroll) updateSongListScrollFromMobileTrack(e);
   });
 
   window.addEventListener('touchmove', (e) => {
     if (isDraggingSlider) updateSongListScrollFromSlider(e);
-    if (isDraggingMobileScroll) updateSongListScrollFromMobileTrack(e);
   }, { passive: true });
 
   window.addEventListener('mouseup', () => {
-    if (isDraggingSlider) isDraggingSlider = false;
-    if (isDraggingMobileScroll) isDraggingMobileScroll = false;
+    if (isDraggingSlider) {
+      isDraggingSlider = false;
+    }
   });
 
   window.addEventListener('touchend', () => {
-    if (isDraggingSlider) isDraggingSlider = false;
-    if (isDraggingMobileScroll) isDraggingMobileScroll = false;
+    if (isDraggingSlider) {
+      isDraggingSlider = false;
+    }
   });
 
   // Dedicated Audio Timeline Seek Handlers (Desktop & Mobile)
@@ -575,7 +836,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Search Modal / Input (Desktop & Mobile buttons)
-  const allSearchBtns = [searchBtn, document.getElementById('mobileSearchBtn'), document.getElementById('mobileFullSearchBtn')];
+  const allSearchBtns = [searchBtn, document.getElementById('mobileSearchBtn')];
   allSearchBtns.forEach(btn => {
     if (btn && searchOverlay) {
       btn.addEventListener('click', () => {
@@ -627,13 +888,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     contextTrackId = trackId;
     if (!contextMenu) return;
 
-    const x = Math.min(window.innerWidth - 180, e.clientX - 100);
-    const y = Math.min(window.innerHeight - 200, e.clientY + 10);
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+    if ((clientX === undefined || clientY === undefined) && e.touches && e.touches[0]) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+    if (clientX === undefined || clientY === undefined) {
+      const target = e.currentTarget || e.target;
+      if (target && target.getBoundingClientRect) {
+        const r = target.getBoundingClientRect();
+        clientX = r.left + r.width / 2;
+        clientY = r.bottom;
+      } else {
+        clientX = window.innerWidth / 2;
+        clientY = window.innerHeight / 2;
+      }
+    }
+
+    const x = Math.min(window.innerWidth - 190, Math.max(10, clientX - 80));
+    const y = Math.min(window.innerHeight - 200, Math.max(10, clientY + 8));
 
     contextMenu.style.left = `${x}px`;
     contextMenu.style.top = `${y}px`;
     contextMenu.classList.add('open');
   }
+
+  // Now Playing cover image 3-dot options buttons (PC & Mobile)
+  const nowPlayingOptionsBtn = document.getElementById('nowPlayingOptionsBtn');
+  const mobileFullOptionsBtn = document.getElementById('mobileFullOptionsBtn');
+  [nowPlayingOptionsBtn, mobileFullOptionsBtn].forEach(btn => {
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (player.currentTrack) {
+          showContextMenu(e, player.currentTrack.id);
+        } else {
+          showToast('No song is currently playing');
+        }
+      });
+    }
+  });
 
   // Context Menu Actions
   document.querySelectorAll('.context-item').forEach(item => {
@@ -719,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('drop', async (e) => {
     e.preventDefault();
     document.body.classList.remove('drag-over');
-    const files = Array.from(e.dataTransfer.files).filter(f => 
+    const files = Array.from(e.dataTransfer.files).filter(f =>
       /\.(mp3|wav|ogg|flac|m4a|aac|opus|weba|webm)$/i.test(f.name) || f.type.startsWith('audio/')
     );
 
@@ -730,7 +1025,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         allTracks = [...imported, ...allTracks];
         renderSongList();
         showToast(`Added ${imported.length} song${imported.length > 1 ? 's' : ''}!`);
-        player.setQueue(allTracks, 0, true);
+        // Prepare tracks without autoplay (FIX 3)
+        player.setQueue(allTracks, 0, false);
       }
     }
   });

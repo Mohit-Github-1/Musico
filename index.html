@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Musico — Offline Music Web App</title>
-  <meta name="description" content="Musico is a premium offline local music web application with rich audio playback, metadata parsing, and equalizer visualization." />
-  
+  <meta name="description"
+    content="Musico is a premium offline local music web application with rich audio playback, metadata parsing, and equalizer visualization." />
+
   <!-- Fonts: Space Grotesk, Contrail One, Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Contrail+One&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Contrail+One&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
   <!-- App Stylesheet -->
   <link rel="stylesheet" href="css/style.css" />
 
@@ -24,9 +28,10 @@
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
   <link rel="icon" type="image/png" href="assets/Mlogo.png" />
 </head>
+
 <body>
   <div class="musico-app">
-    
+
     <!-- 1. LEFT SIDEBAR -->
     <aside class="sidebar" aria-label="Main Navigation">
       <div class="sidebar-top">
@@ -38,8 +43,8 @@
         <!-- Add Music Folder Button (+) -->
         <button class="add-folder-btn" id="addFolderBtn" title="Add Music Folder / Files" aria-label="Add Music Folder">
           <svg class="add-icon" viewBox="0 0 24 24" fill="none">
-            <line x1="12" y1="3.5" x2="12" y2="20.5" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
-            <line x1="3.5" y1="12" x2="20.5" y2="12" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+            <line x1="12" y1="3.5" x2="12" y2="20.5" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+            <line x1="3.5" y1="12" x2="20.5" y2="12" stroke="white" stroke-width="3.5" stroke-linecap="round" />
           </svg>
         </button>
       </div>
@@ -70,7 +75,8 @@
       <header class="player-header">
         <span class="brand-text">usico</span>
         <div class="view-selector-container">
-          <button class="view-selector-pill" id="viewSelectorPill" aria-haspopup="true" aria-expanded="false" title="View Options">
+          <button class="view-selector-pill" id="viewSelectorPill" aria-haspopup="true" aria-expanded="false"
+            title="View Options">
             <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -89,7 +95,8 @@
       <div class="player-body">
         <!-- Top Horizontal Slider Row (Song List Scroll Control) -->
         <div class="top-slider-row">
-          <div class="top-slider-pill" id="topSliderTrack" title="Scroll Songs List" role="scrollbar" aria-label="Scroll Songs List" tabindex="0">
+          <div class="top-slider-pill" id="topSliderTrack" title="Scroll Songs List" role="scrollbar"
+            aria-label="Scroll Songs List" tabindex="0">
             <div class="top-slider-thumb" id="topSliderThumb"></div>
           </div>
         </div>
@@ -115,7 +122,9 @@
 
         <!-- Large Squircle Album Art Container -->
         <div class="album-art-container">
-          <img src="assets/Mlogowithbg.png" alt="Album Cover Art" id="nowPlayingAlbumArt" class="album-art-img fallback-art" onerror="this.onerror=null;this.src='assets/Mlogowithbg.png';this.className='album-art-img fallback-art';" />
+          <img src="assets/Mlogowithbg.png" alt="Album Cover Art" id="nowPlayingAlbumArt"
+            class="album-art-img fallback-art"
+            onerror="this.onerror=null;this.src='assets/Mlogowithbg.png';this.className='album-art-img fallback-art';" />
           <div class="album-carousel-dots" aria-hidden="true">
             <span class="carousel-dot"></span>
             <span class="carousel-dot filled"></span>
@@ -123,7 +132,8 @@
         </div>
 
         <!-- Bottom Progress Pill Bar with Track Title -->
-        <div class="player-bottom-progress-bar" id="progressBarContainer" title="Click to seek" role="progressbar" aria-label="Track Progress" tabindex="0">
+        <div class="player-bottom-progress-bar" id="progressBarContainer" title="Click to seek" role="progressbar"
+          aria-label="Track Progress" tabindex="0">
           <div class="progress-pill-active" id="progressPill"></div>
           <span class="now-playing-song-name" id="nowPlayingTitle">No Songs</span>
         </div>
@@ -135,12 +145,13 @@
             <button class="control-btn" id="prevBtn" title="Previous Track" aria-label="Previous Track">
               <img src="assets/Prevbtn.svg" alt="Previous" class="control-btn-icon" />
             </button>
-            
+
             <!-- Play / Pause Button -->
-            <button class="control-btn play-pause-btn" id="playPauseBtn" title="Play / Pause" aria-label="Play or Pause">
+            <button class="control-btn play-pause-btn" id="playPauseBtn" title="Play / Pause"
+              aria-label="Play or Pause">
               <img src="assets/Plausebtn.svg" alt="Play" class="control-btn-icon" />
             </button>
-            
+
             <!-- Next Button -->
             <button class="control-btn" id="nextBtn" title="Next Track" aria-label="Next Track">
               <img src="assets/Nxtbtn.svg" alt="Next" class="control-btn-icon" />
@@ -175,9 +186,12 @@
 
       <!-- Mobile Side Controls: Add Music Folder (Black), Settings (Gray) & Vertical Scrollbar (Below Settings - IMAGE 1) -->
       <div class="mobile-side-controls" id="mobileSideControls" aria-label="Mobile Quick Controls">
-        <button class="mobile-side-btn add-btn" id="mobileSideAddBtn" title="Add Music Folder" aria-label="Add Music Folder"></button>
-        <button class="mobile-side-btn settings-btn" id="mobileSideSettingsBtn" title="Settings" aria-label="Settings"></button>
-        <div class="mobile-scroll-track" id="mobileScrollTrack" title="Scroll Songs List" role="scrollbar" aria-label="Scroll Songs List" tabindex="0">
+        <button class="mobile-side-btn add-btn" id="mobileSideAddBtn" title="Add Music Folder"
+          aria-label="Add Music Folder"></button>
+        <button class="mobile-side-btn settings-btn" id="mobileSideSettingsBtn" title="Settings"
+          aria-label="Settings"></button>
+        <div class="mobile-scroll-track" id="mobileScrollTrack" title="Scroll Songs List" role="scrollbar"
+          aria-label="Scroll Songs List" tabindex="0">
           <div class="mobile-scroll-thumb" id="mobileScrollThumb"></div>
         </div>
       </div>
@@ -215,15 +229,18 @@
       <!-- Mobile Compact Now Playing Pop-up (IMAGE 3) -->
       <div class="mobile-compact-popup" id="mobileCompactPopup" role="region" aria-label="Now Playing Compact Control">
         <div class="mobile-popup-cover-wrapper" id="mobilePopupCoverWrapper">
-          <img src="assets/M logo for music items.png" alt="Cover Art" id="mobilePopupCoverArt" class="mobile-popup-cover fallback-art" />
+          <img src="assets/M logo for music items.png" alt="Cover Art" id="mobilePopupCoverArt"
+            class="mobile-popup-cover fallback-art" />
         </div>
         <div class="mobile-popup-body" id="mobilePopupBody">
           <div class="mobile-popup-top-row">
             <div class="mobile-popup-controls">
-              <button class="mobile-popup-ctrl-btn" id="mobilePopupPrevBtn" title="Previous Track" aria-label="Previous Track">
+              <button class="mobile-popup-ctrl-btn" id="mobilePopupPrevBtn" title="Previous Track"
+                aria-label="Previous Track">
                 <img src="assets/Prevbtn.svg" alt="Previous" class="mobile-popup-icon" />
               </button>
-              <button class="mobile-popup-ctrl-btn play-btn" id="mobilePopupPlayPauseBtn" title="Play or Pause" aria-label="Play or Pause">
+              <button class="mobile-popup-ctrl-btn play-btn" id="mobilePopupPlayPauseBtn" title="Play or Pause"
+                aria-label="Play or Pause">
                 <img src="assets/Plausebtn.svg" alt="Play" class="mobile-popup-icon" />
               </button>
               <button class="mobile-popup-ctrl-btn" id="mobilePopupNextBtn" title="Next Track" aria-label="Next Track">
@@ -232,7 +249,8 @@
             </div>
             <span class="mobile-popup-time" id="mobilePopupTimeDisplay">0:00/0:00</span>
           </div>
-          <div class="mobile-popup-progress-track" id="mobilePopupProgressTrack" role="progressbar" aria-label="Track Progress" tabindex="0">
+          <div class="mobile-popup-progress-track" id="mobilePopupProgressTrack" role="progressbar"
+            aria-label="Track Progress" tabindex="0">
             <div class="mobile-popup-progress-bar" id="mobilePopupProgressBar"></div>
           </div>
         </div>
@@ -258,7 +276,8 @@
       </nav>
 
       <!-- Mobile Full Now Playing Screen (IMAGE 2) -->
-      <div class="mobile-full-player" id="mobileFullPlayer" role="dialog" aria-modal="true" aria-label="Full Now Playing Screen">
+      <div class="mobile-full-player" id="mobileFullPlayer" role="dialog" aria-modal="true"
+        aria-label="Full Now Playing Screen">
         <!-- Top Black Header -->
         <header class="mobile-full-header">
           <div class="mobile-logo-brand">
@@ -296,7 +315,8 @@
 
           <!-- Large Squircle Album Art with Carousel Dots -->
           <div class="mobile-full-art-container">
-            <img src="assets/Mlogowithbg.png" alt="Album Art" id="mobileFullAlbumArt" class="mobile-full-art fallback-art" />
+            <img src="assets/Mlogowithbg.png" alt="Album Art" id="mobileFullAlbumArt"
+              class="mobile-full-art fallback-art" />
             <div class="mobile-full-carousel-dots" aria-hidden="true">
               <span class="carousel-dot"></span>
               <span class="carousel-dot"></span>
@@ -305,7 +325,8 @@
           </div>
 
           <!-- Progress Pill Bar with Track Title -->
-          <div class="mobile-full-progress-bar-container" id="mobileFullProgressBarContainer" role="progressbar" aria-label="Track Progress" tabindex="0">
+          <div class="mobile-full-progress-bar-container" id="mobileFullProgressBarContainer" role="progressbar"
+            aria-label="Track Progress" tabindex="0">
             <div class="mobile-full-progress-pill" id="mobileFullProgressPill"></div>
             <span class="mobile-full-song-title" id="mobileFullTitle">No Songs</span>
           </div>
@@ -313,10 +334,12 @@
           <!-- Playback Controls Row: <<  ▷  >>    Time -->
           <div class="mobile-full-controls-row">
             <div class="mobile-full-transport-group">
-              <button class="mobile-full-ctrl-btn" id="mobileFullPrevBtn" title="Previous Track" aria-label="Previous Track">
+              <button class="mobile-full-ctrl-btn" id="mobileFullPrevBtn" title="Previous Track"
+                aria-label="Previous Track">
                 <img src="assets/Prevbtn.svg" alt="Previous" class="mobile-ctrl-icon" />
               </button>
-              <button class="mobile-full-ctrl-btn play-btn" id="mobileFullPlayPauseBtn" title="Play or Pause" aria-label="Play or Pause">
+              <button class="mobile-full-ctrl-btn play-btn" id="mobileFullPlayPauseBtn" title="Play or Pause"
+                aria-label="Play or Pause">
                 <img src="assets/Plausebtn.svg" alt="Play" class="mobile-ctrl-icon" />
               </button>
               <button class="mobile-full-ctrl-btn" id="mobileFullNextBtn" title="Next Track" aria-label="Next Track">
@@ -352,7 +375,8 @@
 
   <!-- Hidden Folder & File Pickers -->
   <input type="file" id="folderPickerInput" webkitdirectory directory multiple accept="audio/*" style="display:none;" />
-  <input type="file" id="filePickerInput" multiple accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac" style="display:none;" />
+  <input type="file" id="filePickerInput" multiple accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac"
+    style="display:none;" />
 
   <!-- Search Modal Overlay -->
   <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true">
@@ -372,7 +396,7 @@
         <h2 class="settings-title">Musico Settings</h2>
         <button class="close-modal-btn" id="closeSettingsBtn" aria-label="Close settings">✕</button>
       </div>
-      
+
       <div class="settings-group">
         <label class="settings-group-label" for="settingsVolumeSlider">Master Audio Volume</label>
         <input type="range" id="settingsVolumeSlider" class="range-slider" min="0" max="100" value="85" />
@@ -412,4 +436,5 @@
   <script src="js/player.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>
