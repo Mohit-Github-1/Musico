@@ -116,10 +116,9 @@
         <!-- Large Squircle Album Art Container -->
         <div class="album-art-container">
           <img src="assets/Mlogowithbg.png" alt="Album Cover Art" id="nowPlayingAlbumArt" class="album-art-img fallback-art" onerror="this.onerror=null;this.src='assets/Mlogowithbg.png';this.className='album-art-img fallback-art';" />
-          <div class="album-carousel-dots" aria-hidden="true">
-            <span class="carousel-dot"></span>
-            <span class="carousel-dot filled"></span>
-          </div>
+          <button class="now-playing-options-btn" id="nowPlayingOptionsBtn" title="Song Options" aria-label="Song Options">
+            <img src="Assets/Options 3 Dots.svg" alt="Options" class="now-playing-options-icon" />
+          </button>
         </div>
 
         <!-- Bottom Progress Pill Bar with Track Title -->
@@ -173,10 +172,13 @@
         <button class="mobile-filter-btn" id="mobileFilterShuffleBtn">Shuffle</button>
       </div>
 
-      <!-- Mobile Side Controls: Add Music Folder (Black) & Settings (Gray) -->
+      <!-- Mobile Side Controls: Add Music Folder (Black), Settings (Gray) & Vertical Scrollbar (Black Track + Gray Thumb) -->
       <div class="mobile-side-controls" id="mobileSideControls" aria-label="Mobile Quick Controls">
         <button class="mobile-side-btn add-btn" id="mobileSideAddBtn" title="Add Music Folder" aria-label="Add Music Folder"></button>
         <button class="mobile-side-btn settings-btn" id="mobileSideSettingsBtn" title="Settings" aria-label="Settings"></button>
+        <div class="mobile-scrollbar-track" id="mobileScrollbarTrack" role="scrollbar" aria-label="Song List Scrollbar" tabindex="0">
+          <div class="mobile-scrollbar-thumb" id="mobileScrollbarThumb"></div>
+        </div>
       </div>
 
       <!-- Desktop Library Top Header -->
@@ -254,19 +256,8 @@
         </button>
       </nav>
 
-      <!-- Mobile Full Now Playing Screen (IMAGE 2) -->
+      <!-- Mobile Full Now Playing Screen (IMAGE 2 - Animated White Content Area) -->
       <div class="mobile-full-player" id="mobileFullPlayer" role="dialog" aria-modal="true" aria-label="Full Now Playing Screen">
-        <!-- Top Black Header -->
-        <header class="mobile-full-header">
-          <div class="mobile-logo-brand">
-            <img src="assets/Mlogo.png" alt="Musico Logo" class="mobile-logo-icon" />
-            <span class="mobile-brand-text">usico</span>
-          </div>
-          <button class="mobile-search-btn" id="mobileFullSearchBtn" title="Search Songs" aria-label="Search Songs">
-            <img src="assets/Search.png" alt="Search" class="mobile-search-icon" />
-          </button>
-        </header>
-
         <!-- Swipe Down Indicator Handle -->
         <div class="mobile-swipe-handle" id="mobileSwipeHandle" title="Swipe down to return">
           <span class="swipe-pill"></span>
@@ -280,68 +271,72 @@
         </div>
 
         <!-- Main Full Player Content -->
-        <div class="mobile-full-body">
-          <!-- Artist with Sound Wave Equalizer -->
-          <div class="mobile-full-artist-row">
-            <div class="equalizer-icon-static" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
+        <div class="mobile-full-body" id="mobileFullBody">
+          <div class="mobile-full-main-content" id="mobileFullMainContent">
+            <!-- Artist with Sound Wave Equalizer -->
+            <div class="mobile-full-artist-row">
+              <div class="equalizer-icon-static" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <h2 class="mobile-full-artist-name" id="mobileFullArtist">Unknown</h2>
             </div>
-            <h2 class="mobile-full-artist-name" id="mobileFullArtist">Unknown</h2>
-          </div>
 
-          <!-- Large Squircle Album Art with Carousel Dots -->
-          <div class="mobile-full-art-container">
-            <img src="assets/Mlogowithbg.png" alt="Album Art" id="mobileFullAlbumArt" class="mobile-full-art fallback-art" />
-            <div class="mobile-full-carousel-dots" aria-hidden="true">
-              <span class="carousel-dot"></span>
-              <span class="carousel-dot"></span>
-              <span class="carousel-dot filled"></span>
-            </div>
-          </div>
-
-          <!-- Progress Pill Bar with Track Title -->
-          <div class="mobile-full-progress-bar-container" id="mobileFullProgressBarContainer" role="progressbar" aria-label="Track Progress" tabindex="0">
-            <div class="mobile-full-progress-pill" id="mobileFullProgressPill"></div>
-            <span class="mobile-full-song-title" id="mobileFullTitle">No Songs</span>
-          </div>
-
-          <!-- Playback Controls Row: <<  ▷  >>    Time -->
-          <div class="mobile-full-controls-row">
-            <div class="mobile-full-transport-group">
-              <button class="mobile-full-ctrl-btn" id="mobileFullPrevBtn" title="Previous Track" aria-label="Previous Track">
-                <img src="assets/Prevbtn.svg" alt="Previous" class="mobile-ctrl-icon" />
-              </button>
-              <button class="mobile-full-ctrl-btn play-btn" id="mobileFullPlayPauseBtn" title="Play or Pause" aria-label="Play or Pause">
-                <img src="assets/Plausebtn.svg" alt="Play" class="mobile-ctrl-icon" />
-              </button>
-              <button class="mobile-full-ctrl-btn" id="mobileFullNextBtn" title="Next Track" aria-label="Next Track">
-                <img src="assets/Nxtbtn.svg" alt="Next" class="mobile-ctrl-icon" />
+            <!-- Large Squircle Album Art with Options Button -->
+            <div class="mobile-full-art-container">
+              <img src="assets/Mlogowithbg.png" alt="Album Art" id="mobileFullAlbumArt" class="mobile-full-art fallback-art" />
+              <button class="now-playing-options-btn mobile-full-options-btn" id="mobileFullOptionsBtn" title="Song Options" aria-label="Song Options">
+                <img src="Assets/Options 3 Dots.svg" alt="Options" class="now-playing-options-icon" />
               </button>
             </div>
-            <span class="mobile-full-time-display" id="mobileFullTimeDisplay">0:00/0:00</span>
+
+            <!-- Progress Pill Bar with Track Title -->
+            <div class="mobile-full-progress-bar-container" id="mobileFullProgressBarContainer" role="progressbar" aria-label="Track Progress" tabindex="0">
+              <div class="mobile-full-progress-pill" id="mobileFullProgressPill"></div>
+              <span class="mobile-full-song-title" id="mobileFullTitle">No Songs</span>
+            </div>
+
+            <!-- Playback Controls Row: <<  ▷  >>    Time -->
+            <div class="mobile-full-controls-row">
+              <div class="mobile-full-transport-group">
+                <button class="mobile-full-ctrl-btn" id="mobileFullPrevBtn" title="Previous Track" aria-label="Previous Track">
+                  <img src="assets/Prevbtn.svg" alt="Previous" class="mobile-ctrl-icon" />
+                </button>
+                <button class="mobile-full-ctrl-btn play-btn" id="mobileFullPlayPauseBtn" title="Play or Pause" aria-label="Play or Pause">
+                  <img src="assets/Plausebtn.svg" alt="Play" class="mobile-ctrl-icon" />
+                </button>
+                <button class="mobile-full-ctrl-btn" id="mobileFullNextBtn" title="Next Track" aria-label="Next Track">
+                  <img src="assets/Nxtbtn.svg" alt="Next" class="mobile-ctrl-icon" />
+                </button>
+              </div>
+              <span class="mobile-full-time-display" id="mobileFullTimeDisplay">0:00/0:00</span>
+            </div>
+          </div>
+
+          <!-- Responsive In-Place Up Next Section (Image 2 & Image 3) -->
+          <div class="mobile-up-next-section" id="mobileUpNextSection" aria-label="Up Next Queue">
+            <div class="mobile-up-next-header" id="mobileUpNextHeader">
+              <span class="mobile-up-next-label">Up Next</span>
+            </div>
+            <div class="mobile-up-next-list" id="mobileUpNextList">
+              <!-- Dynamically populated based on available height -->
+            </div>
           </div>
         </div>
 
-        <!-- Fixed Bottom Navigation inside Full Player (IMAGE 2) -->
-        <nav class="mobile-bottom-nav mobile-full-bottom-nav" aria-label="Mobile Navigation">
-          <button class="mobile-nav-btn active" data-action="home" title="Home" aria-label="Home">
-            <img src="assets/HomeMenuItem.png" alt="Home" class="mobile-nav-icon" />
-          </button>
-          <button class="mobile-nav-btn" data-action="playlists" title="Playlists" aria-label="Playlists">
-            <img src="assets/PlaylistMenuItem.png" alt="Playlists" class="mobile-nav-icon" />
-          </button>
-          <button class="mobile-nav-btn" data-action="albums" title="Albums" aria-label="Albums">
-            <img src="assets/AlbumMenuItem.png" alt="Albums" class="mobile-nav-icon" />
-          </button>
-          <button class="mobile-nav-btn" data-action="all-songs" title="All Songs" aria-label="All Songs">
-            <img src="assets/AllSongsMenuItem.png" alt="All Songs" class="mobile-nav-icon" />
-          </button>
-          <button class="mobile-nav-btn" data-action="delete" title="Manage Library" aria-label="Manage Library">
-            <img src="assets/DeleteMenuItem.png" alt="Manage Library" class="mobile-nav-icon" />
-          </button>
-        </nav>
+        <!-- Full-Screen Up Next Panel (Slides up on upward swipe) -->
+        <div class="mobile-up-next-panel" id="mobileUpNextPanel" role="dialog" aria-modal="true" aria-label="Full Up Next Queue">
+          <div class="mobile-up-next-panel-handle" id="mobileUpNextPanelHandle" title="Swipe down to close Up Next">
+            <span class="swipe-pill"></span>
+          </div>
+          <div class="mobile-up-next-panel-header">
+            <h2 class="mobile-up-next-panel-title">Up Next</h2>
+          </div>
+          <div class="mobile-up-next-full-list" id="mobileUpNextFullList">
+            <!-- Full upcoming queue list -->
+          </div>
+        </div>
       </div>
     </section>
 

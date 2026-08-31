@@ -274,7 +274,39 @@ class MusicPlayer {
     shuffleBtns.forEach(btn => {
       if (btn) btn.classList.toggle('active', this.isShuffle);
     });
+
+    if (window.updateMobileUpNextUI) {
+      window.updateMobileUpNextUI();
+    }
+
     return this.isShuffle;
+  }
+
+  /**
+   * Set Repeat Mode ('off', 'all', 'one')
+   */
+  setRepeatMode(mode) {
+    this.repeatMode = mode;
+    if (window.updateMobileUpNextUI) {
+      window.updateMobileUpNextUI();
+    }
+  }
+
+  /**
+   * Toggle Repeat Mode
+   */
+  toggleRepeat() {
+    if (this.repeatMode === 'off') {
+      this.repeatMode = 'all';
+    } else if (this.repeatMode === 'all') {
+      this.repeatMode = 'one';
+    } else {
+      this.repeatMode = 'off';
+    }
+    if (window.updateMobileUpNextUI) {
+      window.updateMobileUpNextUI();
+    }
+    return this.repeatMode;
   }
 
   /**
@@ -488,6 +520,10 @@ class MusicPlayer {
         mobileFullAlbumArt.src = this.currentTrack.coverUrl;
         mobileFullAlbumArt.className = 'mobile-full-art';
       }
+    }
+
+    if (window.updateMobileUpNextUI) {
+      window.updateMobileUpNextUI();
     }
   }
 
