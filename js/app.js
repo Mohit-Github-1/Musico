@@ -424,7 +424,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // Top Horizontal Slider: Vertical Song-List Scroll Control
+  // Mobile Vertical Scrollbar Control (Positioned directly below Settings Button - IMAGE 1)
+  const mobileScrollTrack = document.getElementById('mobileScrollTrack');
+  const mobileScrollThumb = document.getElementById('mobileScrollThumb');
+  let isDraggingMobileScroll = false;
+
+  function updateMobileScrollThumbFromSongList() {
+    if (isDraggingMobileScroll || !mobileScrollTrack || !mobileScrollThumb || !songsListContainer) return;
+    const maxScroll = songsListContainer.scrollHeight - songsListContainer.clientHeight;
+    const scrollPercent = maxScroll > 0 ? Math.min(100, Math.max(0, songsListContainer.scrollTop / maxScroll)) : 0;
+    const maxTop = Math.max(0, mobileScrollTrack.clientHeight - mobileScrollThumb.clientHeight);
+    mobileScrollThumb.style.top = `${scrollPercent * maxTop}px`;
+  }
+
+  function updateSongListScrollFromMobileTrack(e) {
+    if (!mobileScrollTrack || !songsListContainer) return;
+    const rect = mobileScrollTrack.getBoundingClientRect();
+    const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+    const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+    const percent = rect.height > 0 ? y / rect.height : 0;
+
+    const maxTop = Math.max(0, mobileScrollTrack.clientHeight - (mobileScrollThumb ? mobileScrollThumb.clientHeight : 26));
+    if (mobileScrollThumb) {
+      mobileScrollThumb.style.top = `${percent * maxTop}px`;
+    }
+
+    const maxScroll = Math.max(0, songsListContainer.scrollHeight - songsListContainer.clientHeight);
+    songsListContainer.scrollTop = percent * maxScroll;
+  }
+
+  // Top Horizontal Slider: Vertical Song-List Scroll Control (Desktop)
   let isDraggingSlider = false;
 
   function updateSongListScrollFromSlider(e) {
@@ -449,6 +478,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateSliderThumbFromSongListScroll() {
+    if (!songsListContainer) return;
+    updateSliderThumbFromSongListScrollInner();
+    updateMobileScrollThumbFromSongList();
+  }
+
+  function updateSliderThumbFromSongListScrollInner() {
     if (isDraggingSlider || !topSliderTrack || !topSliderThumb || !songsListContainer) return;
     const maxScroll = songsListContainer.scrollHeight - songsListContainer.clientHeight;
     const scrollPercent = maxScroll > 0 ? Math.min(100, Math.max(0, (songsListContainer.scrollTop / maxScroll) * 100)) : 0;
@@ -460,6 +495,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (songsListContainer) {
     songsListContainer.addEventListener('scroll', updateSliderThumbFromSongListScroll, { passive: true });
+  }
+
+  if (mobileScrollTrack) {
+    mobileScrollTrack.addEventListener('mousedown', (e) => {
+      isDraggingMobileScroll = true;
+      updateSongListScrollFromMobileTrack(e);
+    });
+
+    mobileScrollTrack.addEventListener('touchstart', (e) => {
+      isDraggingMobileScroll = true;
+      updateSongListScrollFromMobileTrack(e);
+    }, { passive: true });
   }
 
   if (topSliderTrack) {
@@ -476,22 +523,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('mousemove', (e) => {
     if (isDraggingSlider) updateSongListScrollFromSlider(e);
+    if (isDraggingMobileScroll) updateSongListScrollFromMobileTrack(e);
   });
 
   window.addEventListener('touchmove', (e) => {
     if (isDraggingSlider) updateSongListScrollFromSlider(e);
+    if (isDraggingMobileScroll) updateSongListScrollFromMobileTrack(e);
   }, { passive: true });
 
   window.addEventListener('mouseup', () => {
-    if (isDraggingSlider) {
-      isDraggingSlider = false;
-    }
+    if (isDraggingSlider) isDraggingSlider = false;
+    if (isDraggingMobileScroll) isDraggingMobileScroll = false;
   });
 
   window.addEventListener('touchend', () => {
-    if (isDraggingSlider) {
-      isDraggingSlider = false;
-    }
+    if (isDraggingSlider) isDraggingSlider = false;
+    if (isDraggingMobileScroll) isDraggingMobileScroll = false;
   });
 
   // Dedicated Audio Timeline Seek Handlers (Desktop & Mobile)

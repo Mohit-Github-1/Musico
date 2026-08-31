@@ -36,13 +36,16 @@
 }
 
 /* Reset & Base Setup */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -442,9 +445,17 @@ html, body {
   border-radius: 2px;
 }
 
-.equalizer-icon-static span:nth-child(1) { height: 16px; }
-.equalizer-icon-static span:nth-child(2) { height: 11px; }
-.equalizer-icon-static span:nth-child(3) { height: 18px; }
+.equalizer-icon-static span:nth-child(1) {
+  height: 16px;
+}
+
+.equalizer-icon-static span:nth-child(2) {
+  height: 11px;
+}
+
+.equalizer-icon-static span:nth-child(3) {
+  height: 18px;
+}
 
 .artist-title-bold {
   font-family: var(--font-heading);
@@ -1188,7 +1199,8 @@ html, body {
   transition: all 0.15s ease;
 }
 
-.eq-preset-btn.active, .eq-preset-btn:hover {
+.eq-preset-btn.active,
+.eq-preset-btn:hover {
   background: #FFFFFF;
   color: #000000;
 }
@@ -1303,6 +1315,7 @@ body.drag-over::after {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1318,43 +1331,53 @@ body.drag-over::after {
   .musico-app {
     flex-direction: row;
   }
+
   .sidebar {
     width: 78px;
     min-width: 78px;
     padding: 26px 0 20px 0;
   }
+
   .logo-mark {
     width: 46px;
     height: 46px;
     margin-bottom: 20px;
   }
+
   .add-folder-btn {
     top: 86px;
   }
+
   .player-section {
     min-width: 320px;
   }
+
   .player-header {
     height: 84px;
     min-height: 84px;
     padding: 0 20px 12px 8px;
     align-items: flex-end;
   }
+
   .brand-text {
     font-size: 34px;
     letter-spacing: 0.2em;
     align-items: flex-end;
   }
+
   .view-selector-container {
     margin-bottom: -12px;
   }
+
   .player-body {
     padding: 18px 22px;
   }
+
   .library-section {
     min-width: 340px;
     padding: 20px 24px;
   }
+
   .album-art-container {
     max-height: 300px;
   }
@@ -1366,7 +1389,9 @@ body.drag-over::after {
    Desktop & Tablet remain completely untouched above 768px
    ========================================================================== */
 @media (max-width: 768px) {
-  html, body {
+
+  html,
+  body {
     overflow: hidden;
     background-color: #000000;
     width: 100%;
@@ -1391,20 +1416,20 @@ body.drag-over::after {
     display: none !important;
   }
 
-  /* Library Section becomes Mobile Song List Page */
+  /* Library Section becomes Mobile Song List Page (White Background Theme - IMAGE 1) */
   .library-section {
     width: 100%;
     min-width: 100%;
     height: 100%;
-    background-color: #000000;
+    background-color: #FFFFFF;
     display: flex;
     flex-direction: column;
-    padding: 0;
+    padding: 64px 0 0 0; /* Top padding for fixed header */
     position: relative;
     overflow: hidden;
   }
 
-  /* 1. Mobile Top Header (IMAGE 1) */
+  /* 1. Mobile Top Header (Solid Black - Fixed at top, never moves - IMAGE 1) */
   .mobile-top-header {
     display: flex !important;
     align-items: center;
@@ -1414,7 +1439,11 @@ body.drag-over::after {
     padding: 0 18px;
     background-color: #000000;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    z-index: 25;
+    z-index: 55; /* Always above full player */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
   }
 
   .mobile-logo-brand {
@@ -1468,25 +1497,25 @@ body.drag-over::after {
     object-fit: contain;
   }
 
-  /* 2. Mobile Filter Pill Buttons (All, Column, Shuffle) */
+  /* 2. Mobile Filter Pill Buttons (Black Pills on White Background - IMAGE 1) */
   .mobile-filter-bar {
     display: flex !important;
     align-items: center;
     gap: 8px;
-    padding: 12px 18px 10px 18px;
-    background-color: #000000;
+    padding: 14px 18px 10px 18px;
+    background-color: #FFFFFF;
     z-index: 20;
   }
 
   .mobile-filter-btn {
     background-color: #000000;
     color: #FFFFFF;
-    border: 1.5px solid #222222;
+    border: none;
     border-radius: var(--radius-pill);
-    height: 34px;
-    padding: 0 18px;
+    height: 36px;
+    padding: 0 20px;
     font-family: var(--font-heading);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1494,22 +1523,24 @@ body.drag-over::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 
   .mobile-filter-btn.active {
     background-color: #000000;
-    border-color: #FFFFFF;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+    outline: 2px solid rgba(0, 0, 0, 0.3);
   }
 
-  /* 3. Mobile Side Controls (Black Add Button & Gray Settings Button - IMAGE 1) */
+  /* 3. Mobile Side Controls & Compact Vertical Scrollbar (Placed at Bottom - IMAGE 1) */
   .mobile-side-controls {
     display: flex !important;
     flex-direction: column;
     gap: 8px;
     position: absolute;
-    right: 8px;
-    top: 130px;
+    right: 6px;
+    top: 124px;
+    bottom: 68px; /* Just above bottom nav; compact popup overlays on top */
+    width: 24px;
     z-index: 35;
     pointer-events: auto;
   }
@@ -1519,21 +1550,20 @@ body.drag-over::after {
     border: none;
     cursor: pointer;
     transition: transform 0.15s ease, opacity 0.15s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
   }
 
   .mobile-side-btn.add-btn {
     height: 76px;
-    background-color: #050505;
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    border-radius: 12px;
+    background-color: #000000;
+    border-radius: 14px;
   }
 
   .mobile-side-btn.settings-btn {
     height: 48px;
     background-color: #383838;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
+    border-radius: 14px;
   }
 
   .mobile-side-btn:hover {
@@ -1544,50 +1574,86 @@ body.drag-over::after {
     transform: scale(0.92);
   }
 
-  /* 4. Mobile Songs List (IMAGE 1) */
+  /* Responsive Vertical Scrollbar Track matching Figma reference */
+  .mobile-scroll-track {
+    height: clamp(180px, 25vh, 250px);
+    max-height: 250px;
+    margin-top: auto;
+    flex: none;
+    background-color: #1A1A1A;
+    border-radius: 12px;
+    position: relative;
+    width: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+
+  .mobile-scroll-thumb {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    top: 0;
+    height: clamp(36px, 5vh, 50px);
+    background-color: #555555;
+    border-radius: 8px;
+    transition: top 0.05s linear;
+    pointer-events: none;
+  }
+
+  /* 4. Mobile Songs List (Solid Black Cards on White Background - IMAGE 1) */
   .library-section .songs-list {
     flex: 1;
-    padding: 6px 40px 148px 16px; /* Right padding preserves room for side controls; Bottom padding preserves room for popup & nav */
+    background-color: #FFFFFF;
+    padding: 6px 38px 148px 16px;
+    /* Space on right for scrollbar & side controls; Bottom space for popup & nav */
     display: flex;
     flex-direction: column;
     gap: 12px;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    /* Hide default native browser scrollbar */
+  }
+
+  .library-section .songs-list::-webkit-scrollbar {
+    display: none !important;
+    /* Hide native browser scrollbar */
   }
 
   .library-section .songs-list .song-card {
-    background-color: #0A0A0A;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 18px;
-    padding: 8px 14px 8px 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    min-height: 60px;
+    background-color: #000000;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 14px 10px 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    min-height: 62px;
     position: relative;
   }
 
   .library-section .songs-list .song-card:hover {
-    transform: none;
-    background-color: #121212;
+    transform: translateY(-1px);
+    background-color: #0F0F0F;
   }
 
   .library-section .songs-list .song-card .song-thumb-wrapper {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    border-radius: 10px;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 12px;
     background-color: #000000;
   }
 
   .library-section .songs-list .song-card .song-title {
     color: #FFFFFF;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 500;
   }
 
   .library-section .songs-list .song-card .song-artist {
     color: #8E8E93;
-    font-size: 12.5px;
+    font-size: 13px;
   }
 
   .library-section .songs-list .song-card .song-options-btn {
@@ -1595,7 +1661,8 @@ body.drag-over::after {
   }
 
   .library-section .songs-list .song-card .options-icon {
-    filter: brightness(0) invert(1); /* Crisp white 3-dots on dark cards */
+    filter: brightness(0) invert(1);
+    /* Crisp white 3-dots on dark cards */
   }
 
   /* Active playing song subtle dark / highlighted overlay */
@@ -1657,14 +1724,13 @@ body.drag-over::after {
     display: none !important;
     position: fixed;
     bottom: 68px;
-    left: 14px;
-    right: 14px;
+    left: 16px;
+    right: 38px; /* Same as song list right padding — avoids scrollbar overlap */
     z-index: 40;
     cursor: pointer;
     animation: slideUpPopup 0.25s cubic-bezier(0.32, 0.72, 0, 1);
     user-select: none;
     max-width: 440px;
-    margin: 0 auto;
   }
 
   .mobile-compact-popup.visible {
@@ -1673,11 +1739,11 @@ body.drag-over::after {
 
   .mobile-popup-cover-wrapper {
     position: absolute;
-    top: -42px;
+    top: -78px;
     left: 18px;
-    width: 76px;
-    height: 52px;
-    border-radius: 16px 16px 0 0;
+    width: 132px;
+    height: 93px;
+    border-radius: 18px 18px 0 0;
     overflow: hidden;
     background-color: #000000;
     border: 2px solid #000000;
@@ -1706,11 +1772,11 @@ body.drag-over::after {
     background-color: #000000;
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 20px;
-    padding: 10px 16px 8px 16px;
+    padding: 16px 18px 14px 18px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
   }
 
   .mobile-popup-top-row {
@@ -1793,9 +1859,12 @@ body.drag-over::after {
     display: flex !important;
     flex-direction: column;
     position: fixed;
-    inset: 0;
+    top: 64px; /* Below the fixed mobile top header */
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: #FFFFFF;
-    z-index: 60;
+    z-index: 50; /* Below header z-index (25) on purpose — header stays on top */
     transform: translateY(100%);
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     overflow-y: auto;
@@ -1808,15 +1877,7 @@ body.drag-over::after {
   }
 
   .mobile-full-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    min-height: 64px;
-    padding: 0 18px;
-    background-color: #000000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    flex-shrink: 0;
+    display: none; /* Hidden — main fixed header stays visible above full player */
   }
 
   .mobile-swipe-handle {
@@ -2037,6 +2098,7 @@ body.drag-over::after {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
